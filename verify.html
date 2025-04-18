@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>防伪验证</title>
+</head>
+<body>
+  <h2>欢迎使用官方防伪查询系统</h2>
+  <p id="code-info"></p>
+  <input type="text" id="code-input" placeholder="请输入防伪码">
+  <button onclick="verifyCode()">验证</button>
+  <p id="result"></p>
+
+  <script>
+    // 获取网址中的 code 参数
+    const urlParams = new URLSearchParams(window.location.search);
+    const codeFromURL = urlParams.get('code');
+    if (codeFromURL) {
+      document.getElementById('code-info').innerText = "扫描得到的防伪码：" + codeFromURL;
+      document.getElementById('code-input').value = codeFromURL;
+    }
+
+    // 简单验证逻辑（可扩展）
+    function verifyCode() {
+      const input = document.getElementById('code-input').value;
+      if (input === "83921179") {
+        document.getElementById('result').innerText = "验证成功：此为正品";
+      } else {
+        document.getElementById('result').innerText = "验证失败：防伪码无效或重复使用";
+      }
+    }
+  </script>
+</body>
+</html>
