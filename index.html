@@ -112,6 +112,7 @@
     <p>您所查询的16位防伪码为：<span class="code-black" id="blackCode">加载中...</span></p>
 
     <p>本产品为正品，请放心给您的爱宠喂食，感谢您购买ACANA爱肯拿宠物食品。</p>
+    <p id="queryTime">首次查询时间：加载中...</p>
 
     <div class="border-box">
       原产地：美国
@@ -166,7 +167,18 @@
     }
 
     renderColorCode(code);
+
+    // 显示当前查询时间
+    const now = new Date();
+    const formatted = now.getFullYear() + "年" +
+                      (now.getMonth() + 1).toString().padStart(2, '0') + "月" +
+                      now.getDate().toString().padStart(2, '0') + "日 " +
+                      now.getHours().toString().padStart(2, '0') + ":" +
+                      now.getMinutes().toString().padStart(2, '0') + ":" +
+                      now.getSeconds().toString().padStart(2, '0');
+    document.getElementById("queryTime").textContent = "首次查询时间：" + formatted;
   </script>
 </body>
 </html>
+
 
