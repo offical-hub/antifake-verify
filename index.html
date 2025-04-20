@@ -20,50 +20,59 @@
       border-radius: 8px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
-
-    /* 让 Logo  图片真正铺满手机屏幕 */
+    /* Logo 全屏铺满 */
     .top-image {
       display: block;
-      width: calc(100% + 40px);  /* 抵消 container 的左右 padding 各20px */
-      margin: -20px -20px 15px;   /* 上：-20px 抵消 container 上 padding，下：15px 空隙 */
+      width: calc(100% + 40px);
+      margin: -20px -20px 15px;
       height: auto;
       object-fit: contain;
-    }
-
-    h2 {
-      font-size: 20px;
-      margin: 10px 0;
     }
     .info-block {
       font-size: 18px;
       font-weight: bold;
       margin: 10px 0;
     }
-    .code-group {
-      font-size: 22px;
-      font-weight: bold;
+    p {
+      font-size: 16px;
       margin: 10px 0;
-      letter-spacing: 4px;
     }
-    .color-0 { color: #008000; }
-    .color-1 { color: #b4005a; }
-    .color-2 { color: #000000; }
-    .color-3 { color: #0096ff; }
-
     .border-box {
       border: 1px dashed #333;
       padding: 10px;
       margin: 40px 0 20px;
-      text-align: center;
+      text-align: left;          /* 左对齐 */
+      font-size: 16px;
     }
-
-    .color-code {
+    /* 两行防伪码样式 */
+    .code-row {
       display: flex;
       justify-content: center;
-      gap: 20px;
-      font-size: 18px;
+      gap: 20px;                 /* 各数字间距20px */
       margin: 10px 0;
     }
+    .digit-group {
+      text-align: center;
+    }
+    .digit {
+      font-size: 22px;
+      font-weight: bold;
+      color: #000;               /* 黑色字体 */
+    }
+    .label {
+      font-size: 12px;
+      margin-top: 4px;
+      color: #000;
+    }
+    /* 颜色类，JS渲染时加在 .digit-group 上 */
+    .color-0 .digit { color: #008000; }
+    .color-1 .digit { color: #b4005a; }
+    .color-2 .digit { color: #000000; }
+    .color-3 .digit { color: #0096ff; }
+    .color-0 .label { color: #008000; }
+    .color-1 .label { color: #b4005a; }
+    .color-2 .label { color: #000000; }
+    .color-3 .label { color: #0096ff; }
 
     .qr-area {
       text-align: center;
@@ -73,21 +82,14 @@
       width: 180px;
       height: 180px;
     }
-    .qr-note {
-      margin-top: 10px;
-      font-size: 14px;
-      color: #555;
-    }
-
-    /* 手机端进一步优化 */
+    /* 小屏优化 */
     @media (max-width: 400px) {
       .top-image {
         width: calc(100% + 20px);
         margin: -20px -10px 12px;
       }
-      .code-group {
+      .digit {
         font-size: 20px;
-        letter-spacing: 3px;
       }
       img.qr-generated {
         width: 160px;
@@ -101,26 +103,21 @@
     <!-- Logo 铺满屏幕宽度 -->
     <img class="top-image" src="logo.jpg" alt="品牌Logo" />
 
-    <div class="info-block"><strong>尊敬的用户您好</strong></div>
+    <div class="info-block">尊敬的用户您好</div>
     <p>您所查询的16位防伪码为：</p>
 
-    <div class="code-group" id="codeContainer"></div>
+    <!-- 第一行8位 -->
+    <div id="codeRow1" class="code-row"></div>
+    <!-- 第二行8位 -->
+    <div id="codeRow2" class="code-row"></div>
+
     <p>此防伪码正确，该产品为正品，感谢您的查询！</p>
 
     <div class="border-box">
-      <p>原产地：美国</p>
-    </div>
-    
-      <p style="margin-top: 20px;">请核对16位防伪码及二维码颜色：</p>
-    <div class="color-code">
-      <span class="color-0">绿</span>
-      <span class="color-1">红</span>
-      <span class="color-2">黑</span>
-      <span class="color-3">蓝</span>
+      原产地：美国
     </div>
 
-    <!-- 防伪码渲染两行也可，这里一行渲染完 -->
-    <div class="code-group" id="line1"></div>
+    <p style="margin-top:20px;">请核对16位防伪码及二维码颜色：</p>
 
     <div class="qr-area">
       <img class="qr-generated"
@@ -133,22 +130,52 @@
     const params = new URLSearchParams(window.location.search);
     const code = params.get("code") || "1234567890123456";
 
-    const colorMap = ["color-0", "color-1", "color-2", "color-3"];
-    const colorSeq = [0,1,2,3,0,1,2,3,0,1,2,3,0,1,2,3];
+    // 每4位一个循环色块
+    const colorSeq = [
+      0, 1, 2, 3,
+      1, 2, 3, 0,
+      2, 3, 0, 1,
+      3, 0, 1, 2
+    ];
 
-    function renderCode(codeStr) {
-      const container = document.getElementById("line1");
-      container.innerHTML = "";
-      for (let i = 0; i < 16; i++) {
-        const span = document.createElement("span");
-        span.className = colorMap[colorSeq[i]];
-        span.style.margin = "0 10px";  // 每侧10px，总间距20px
-        span.textContent = codeStr[i];
-        container.appendChild(span);
+    function renderCodeLines(codeStr) {
+      const row1 = document.getElementById("codeRow1");
+      const row2 = document.getElementById("codeRow2");
+      row1.innerHTML = "";
+      row2.innerHTML = "";
+      for (let i = 0; i < 8; i++) {
+        const grp = document.createElement("div");
+        grp.className = "digit-group color-" + colorSeq[i];
+        const d = document.createElement("div");
+        d.className = "digit";
+        d.textContent = codeStr[i];
+        const lbl = document.createElement("div");
+        lbl.className = "label";
+        // 颜色中文：0绿 1红紫 2黑 3蓝
+        const names = ["绿","红紫","黑","蓝"];
+        lbl.textContent = names[colorSeq[i]];
+        grp.appendChild(d);
+        grp.appendChild(lbl);
+        row1.appendChild(grp);
+      }
+      for (let i = 8; i < 16; i++) {
+        const grp = document.createElement("div");
+        grp.className = "digit-group color-" + colorSeq[i];
+        const d = document.createElement("div");
+        d.className = "digit";
+        d.textContent = codeStr[i];
+        const lbl = document.createElement("div");
+        lbl.className = "label";
+        const names = ["绿","红紫","黑","蓝"];
+        lbl.textContent = names[colorSeq[i]];
+        grp.appendChild(d);
+        grp.appendChild(lbl);
+        row2.appendChild(grp);
       }
     }
 
-    renderCode(code);
+    renderCodeLines(code);
   </script>
 </body>
 </html>
+
