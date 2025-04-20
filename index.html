@@ -10,6 +10,7 @@
       background-color: #f0f0f0;
       margin: 0;
       padding: 20px;
+      color: #000;
     }
     .container {
       max-width: 800px;
@@ -19,15 +20,19 @@
       border-radius: 8px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
-    h2 {
-      color: #333;
-      font-size: 20px;
-    }
+
+    /* 让 Logo  图片真正铺满手机屏幕 */
     .top-image {
-      width: 100%;
-      max-height: 100px;
+      display: block;
+      width: calc(100% + 40px);  /* 抵消 container 的左右 padding 各20px */
+      margin: -20px -20px 15px;   /* 上：-20px 抵消 container 上 padding，下：15px 空隙 */
+      height: auto;
       object-fit: contain;
-      margin-bottom: 15px;
+    }
+
+    h2 {
+      font-size: 20px;
+      margin: 10px 0;
     }
     .info-block {
       font-size: 18px;
@@ -44,137 +49,103 @@
     .color-1 { color: #b4005a; }
     .color-2 { color: #000000; }
     .color-3 { color: #0096ff; }
-    .qr-area {
-      margin-top: 25px;
+
+    .border-box {
+      border: 1px dashed #333;
+      padding: 10px;
+      margin: 40px 0 20px;
       text-align: center;
+    }
+
+    .color-code {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      font-size: 18px;
+      margin: 10px 0;
+    }
+
+    .qr-area {
+      text-align: center;
+      margin-top: 30px;
+    }
+    img.qr-generated {
+      width: 180px;
+      height: 180px;
     }
     .qr-note {
       margin-top: 10px;
       font-size: 14px;
       color: #555;
     }
-    .qr-legend {
-      margin-top: 15px;
-      font-size: 14px;
-      color: #333;
-    }
-    .legend-box {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      margin-top: 10px;
-      gap: 12px;
-    }
-    .legend-item {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .color-box {
-      width: 14px;
-      height: 14px;
-      display: inline-block;
-      border-radius: 3px;
-    }
-    .border-box {
-      border: 1px dashed #333;
-      padding: 10px;
-      margin-top: 20px;
-    }
-    .color-code {
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-      font-size: 18px;
-      margin-top: 10px;
-    }
-    .color-code span {
-      font-weight: bold;
-    }
-    img.qr-generated {
-      width: 180px;
-      height: 180px;
-      margin-top: 20px;
+
+    /* 手机端进一步优化 */
+    @media (max-width: 400px) {
+      .top-image {
+        width: calc(100% + 20px);
+        margin: -20px -10px 12px;
+      }
+      .code-group {
+        font-size: 20px;
+        letter-spacing: 3px;
+      }
+      img.qr-generated {
+        width: 160px;
+        height: 160px;
+      }
     }
   </style>
 </head>
 <body>
   <div class="container">
+    <!-- Logo 铺满屏幕宽度 -->
     <img class="top-image" src="logo.jpg" alt="品牌Logo" />
 
-    <div class="info-block"><strong>尊敬的用户您好</strong></div>
+    <div class="info-block"><strong>尊敬的用户您好：</strong></div>
     <p>您所查询的16位防伪码为：</p>
 
-    <div class="code-group" id="codeContainer">
-      <!-- 16位防伪码 -->
-    </div>
+    <div class="code-group" id="codeContainer"></div>
     <p>此防伪码正确，该产品为正品，感谢您的查询！</p>
 
-    <!-- 原产地 -->
     <div class="border-box">
-      <p>原产地：美国</p>
+      原产地：美国
     </div>
 
-    <!-- 核对二维码颜色 -->
     <p style="color: red; margin-top: 20px;">请核对16位防伪码及二维码颜色：</p>
     <div class="color-code">
-      <span class="color-0">绿</span>
-      <span class="color-1">红</span>
-      <span class="color-2">黑</span>
-      <span class="color-3">蓝</span>
+      <span class="color-0">绿色</span>
+      <span class="color-1">红紫</span>
+      <span class="color-2">黑色</span>
+      <span class="color-3">蓝色</span>
     </div>
-    
-    <!-- 防伪码 -->
-    <div class="code-group" id="line1"></div>
-    <div class="code-group" id="line2"></div>
 
-    <!-- 彩色二维码 -->
+    <!-- 防伪码渲染两行也可，这里一行渲染完 -->
+    <div class="code-group" id="line1"></div>
+
     <div class="qr-area">
-      <img class="qr-generated" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://offical-hub.github.io/antifake-verify/" alt="跳转二维码" />
+      <img class="qr-generated"
+           src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://offical-hub.github.io/antifake-verify/"
+           alt="跳转二维码" />
       <div class="qr-note">↑ 手机扫码可跳转防伪验证页面</div>
     </div>
   </div>
 
   <script>
     const params = new URLSearchParams(window.location.search);
-    const code = params.get("code");
+    const code = params.get("code") || "1234567890123456";
 
     const colorMap = ["color-0", "color-1", "color-2", "color-3"];
-    const colorSeq = [
-      [0, 1, 2, 3],
-      [1, 2, 3, 0],
-      [2, 3, 0, 1],
-      [3, 0, 1, 2]
-    ];
+    const colorSeq = [0,1,2,3,0,1,2,3,0,1,2,3,0,1,2,3];
 
     function renderCode(codeStr) {
-      if (!codeStr || codeStr.length !== 16) {
-        document.getElementById("line1").textContent = "防伪码无效";
-        return;
-      }
-
-      const line1 = document.getElementById("line1");
-      const line2 = document.getElementById("line2");
-
-      line1.innerHTML = "";
-      line2.innerHTML = "";
-
-      for (let i = 0; i < 8; i++) {
+      const container = document.getElementById("line1");
+      container.innerHTML = "";
+      for (let i = 0; i < 16; i++) {
         const span = document.createElement("span");
-        const group = Math.floor(i / 4);
-        const colorClass = colorMap[colorSeq[group][i % 4]];
-        span.className = colorClass;
+        span.className = colorMap[colorSeq[i]];
+        span.style.margin = "0 10px";  // 每侧10px，总间距20px
         span.textContent = codeStr[i];
-        line1.appendChild(span);
-      }
-
-      for (let i = 8; i < 16; i++) {
-        const span = document.createElement("span");
-        const group = Math.floor((i - 8) / 4) + 2;
-        const colorClass = colorMap[colorSeq[group][i % 4]];
-        span.className = colorClass;
-        span.textContent = codeStr[i];
-        line2.appendChild(span);
+        container.appendChild(span);
       }
     }
 
@@ -182,4 +153,3 @@
   </script>
 </body>
 </html>
-
