@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>防伪验证系统</title>
+  <title>防伪查询</title>
   <style>
     body {
       font-family: "Microsoft YaHei", Arial, sans-serif;
