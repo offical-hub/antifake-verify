@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>防伪验证系统</title>
+  <title>防伪查询</title>
   <style>
     body {
       font-family: "Microsoft YaHei", Arial, sans-serif;
@@ -93,9 +93,7 @@
   <div class="container">
     <!-- 顶部图片 Logo 或 Banner -->
     <img class="top-image" src="logo.jpg" alt="品牌Logo">
-
-    <h2>防伪码验证结果</h2>
-    <p>尊敬的用户您好，</p>
+    <p>尊敬的用户您好</p>
     <p>你所查询的16位防伪码为：</p>
 
     <div id="codeContainer">
