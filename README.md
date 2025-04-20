@@ -2,35 +2,40 @@
 <html lang="zh">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>防伪验证系统</title>
   <style>
     body {
       font-family: "Microsoft YaHei", Arial, sans-serif;
       background-color: #f0f0f0;
-      padding: 40px;
+      padding: 20px;
+      margin: 0;
     }
     .container {
       max-width: 800px;
       margin: auto;
       background: #fff;
-      padding: 30px;
+      padding: 20px;
       border-radius: 8px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
     h2 {
       color: #333;
+      font-size: 1.5em;
+      margin-top: 0.5em;
     }
     .top-image {
       width: 100%;
-      max-height: 120px;
+      max-height: 100px;
       object-fit: contain;
       margin-bottom: 20px;
     }
     .code-group {
-      font-size: 22px;
+      font-size: 1.4em;
       font-weight: bold;
       margin: 10px 0;
       letter-spacing: 4px;
+      word-break: break-all;
     }
     .color-0 { color: #008000; }   /* 绿色 */
     .color-1 { color: #b4005a; }   /* 红紫 */
@@ -52,9 +57,10 @@
     }
     .legend-box {
       display: flex;
+      flex-wrap: wrap;
       justify-content: center;
+      gap: 10px;
       margin-top: 10px;
-      gap: 20px;
     }
     .legend-item {
       display: flex;
@@ -66,6 +72,20 @@
       height: 14px;
       display: inline-block;
       border-radius: 3px;
+    }
+
+    @media (max-width: 480px) {
+      .code-group {
+        font-size: 1.2em;
+        letter-spacing: 3px;
+      }
+      .qr-area img {
+        width: 160px;
+        height: 160px;
+      }
+      .qr-legend {
+        font-size: 13px;
+      }
     }
   </style>
 </head>
@@ -144,6 +164,7 @@
         line2.appendChild(span);
       }
     }
+
     function getCurrentTime() {
       const now = new Date();
       const yyyy = now.getFullYear();
@@ -154,7 +175,6 @@
       return `${yyyy}-${mm}-${dd} ${hh}:${mi}`;
     }
 
-    // 渲染内容
     renderCode(code);
     document.getElementById("timestamp").textContent = getCurrentTime();
   </script>
