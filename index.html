@@ -20,7 +20,6 @@
       border-radius: 8px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
-    /* Logo 全屏铺满 */
     .top-image {
       display: block;
       width: calc(100% + 40px);
@@ -41,14 +40,22 @@
       border: 1px dashed #333;
       padding: 10px;
       margin: 40px 0 20px;
-      text-align: left;          /* 左对齐 */
+      text-align: left;
       font-size: 16px;
     }
-    /* 两行防伪码样式 */
+
+    .code-black {
+      font-size: 20px;
+      font-weight: bold;
+      color: #000;
+      letter-spacing: 2px;
+    }
+
+    /* 彩色防伪码显示 */
     .code-row {
       display: flex;
       justify-content: center;
-      gap: 20px;                 /* 各数字间距20px */
+      gap: 20px;
       margin: 10px 0;
     }
     .digit-group {
@@ -57,22 +64,18 @@
     .digit {
       font-size: 22px;
       font-weight: bold;
-      color: #000;               /* 黑色字体 */
+      color: #000;
     }
     .label {
       font-size: 12px;
       margin-top: 4px;
       color: #000;
     }
-    /* 颜色类，JS渲染时加在 .digit-group 上 */
-    .color-0 .digit { color: #008000; }
-    .color-1 .digit { color: #b4005a; }
-    .color-2 .digit { color: #000000; }
-    .color-3 .digit { color: #0096ff; }
-    .color-0 .label { color: #008000; }
-    .color-1 .label { color: #b4005a; }
-    .color-2 .label { color: #000000; }
-    .color-3 .label { color: #0096ff; }
+
+    .color-0 .digit, .color-0 .label { color: #008000; } /* 绿 */
+    .color-1 .digit, .color-1 .label { color: #b4005a; } /* 红紫 */
+    .color-2 .digit, .color-2 .label { color: #000000; } /* 黑 */
+    .color-3 .digit, .color-3 .label { color: #0096ff; } /* 蓝 */
 
     .qr-area {
       text-align: center;
@@ -82,7 +85,7 @@
       width: 180px;
       height: 180px;
     }
-    /* 小屏优化 */
+
     @media (max-width: 400px) {
       .top-image {
         width: calc(100% + 20px);
@@ -100,16 +103,13 @@
 </head>
 <body>
   <div class="container">
-    <!-- Logo 铺满屏幕宽度 -->
+    <!-- 顶部品牌 Logo -->
     <img class="top-image" src="logo.jpg" alt="品牌Logo" />
 
     <div class="info-block">尊敬的用户您好</div>
-    <p>您所查询的16位防伪码为：</p>
 
-    <!-- 第一行8位 -->
-    <div id="codeRow1" class="code-row"></div>
-    <!-- 第二行8位 -->
-    <div id="codeRow2" class="code-row"></div>
+    <!-- 黑色防伪码显示 -->
+    <p>您所查询的16位防伪码为：<span class="code-black" id="blackCode">加载中...</span></p>
 
     <p>此防伪码正确，该产品为正品，感谢您的查询！</p>
 
@@ -117,8 +117,14 @@
       原产地：美国
     </div>
 
-    <p style="margin-top:20px;">请核对16位防伪码及二维码颜色：</p>
+    <!-- 彩色防伪码提示 -->
+    <p style="margin-top:40px;">请核对16位防伪码及二维码颜色：</p><br><br>
 
+    <!-- 彩色防伪码分两行展示 -->
+    <div id="codeRow1" class="code-row"></div>
+    <div id="codeRow2" class="code-row"></div>
+
+    <!-- 二维码区域 -->
     <div class="qr-area">
       <img class="qr-generated"
            src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://offical-hub.github.io/antifake-verify/"
@@ -128,9 +134,9 @@
 
   <script>
     const params = new URLSearchParams(window.location.search);
-    const code = params.get("code") || "1234567890123456";
+    const code = params.get("code") || "1234567812345678";
+    document.getElementById("blackCode").textContent = code;
 
-    // 每4位一个循环色块
     const colorSeq = [
       0, 1, 2, 3,
       1, 2, 3, 0,
@@ -138,43 +144,29 @@
       3, 0, 1, 2
     ];
 
-    function renderCodeLines(codeStr) {
+    function renderColorCode(codeStr) {
       const row1 = document.getElementById("codeRow1");
       const row2 = document.getElementById("codeRow2");
       row1.innerHTML = "";
       row2.innerHTML = "";
+      const colorNames = ["绿", "红", "黑", "蓝"];
+
       for (let i = 0; i < 8; i++) {
         const grp = document.createElement("div");
         grp.className = "digit-group color-" + colorSeq[i];
-        const d = document.createElement("div");
-        d.className = "digit";
-        d.textContent = codeStr[i];
-        const lbl = document.createElement("div");
-        lbl.className = "label";
-        // 颜色中文：0绿 1红紫 2黑 3蓝
-        const names = ["绿","红紫","黑","蓝"];
-        lbl.textContent = names[colorSeq[i]];
-        grp.appendChild(d);
-        grp.appendChild(lbl);
+        grp.innerHTML = `<div class="digit">${codeStr[i]}</div><div class="label">${colorNames[colorSeq[i]]}</div>`;
         row1.appendChild(grp);
       }
+
       for (let i = 8; i < 16; i++) {
         const grp = document.createElement("div");
         grp.className = "digit-group color-" + colorSeq[i];
-        const d = document.createElement("div");
-        d.className = "digit";
-        d.textContent = codeStr[i];
-        const lbl = document.createElement("div");
-        lbl.className = "label";
-        const names = ["绿","红紫","黑","蓝"];
-        lbl.textContent = names[colorSeq[i]];
-        grp.appendChild(d);
-        grp.appendChild(lbl);
+        grp.innerHTML = `<div class="digit">${codeStr[i]}</div><div class="label">${colorNames[colorSeq[i]]}</div>`;
         row2.appendChild(grp);
       }
     }
 
-    renderCodeLines(code);
+    renderColorCode(code);
   </script>
 </body>
 </html>
