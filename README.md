@@ -2,71 +2,73 @@
 <html lang="zh">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>防伪查询</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>防伪验证系统</title>
   <style>
     body {
       font-family: "Microsoft YaHei", Arial, sans-serif;
       background-color: #f0f0f0;
-      padding: 20px;
-      margin: 0;
+      padding: 40px;
     }
+
     .container {
       max-width: 800px;
       margin: auto;
       background: #fff;
-      padding: 20px;
+      padding: 30px;
       border-radius: 8px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
+
     h2 {
       color: #333;
-      font-size: 1.5em;
-      margin-top: 0.5em;
     }
+
     .top-image {
       width: 100%;
-      max-height: 100px;
+      max-height: 120px;
       object-fit: contain;
       margin-bottom: 20px;
     }
+
     .code-group {
-      font-size: 1.4em;
+      font-size: 22px;
       font-weight: bold;
       margin: 10px 0;
       letter-spacing: 4px;
-      word-break: break-all;
     }
+
     .color-0 { color: #008000; }   /* 绿色 */
     .color-1 { color: #b4005a; }   /* 红紫 */
     .color-2 { color: #000000; }   /* 黑色 */
     .color-3 { color: #0096ff; }   /* 蓝色 */
-    .qr-area {
-      margin-top: 30px;
-      text-align: center;
-    }
+
     .qr-note {
       margin-top: 10px;
       font-size: 14px;
       color: #555;
     }
+
     .qr-legend {
       margin-top: 20px;
       font-size: 14px;
       color: #333;
     }
+
     .legend-box {
       display: flex;
-      flex-wrap: wrap;
       justify-content: center;
-      gap: 10px;
       margin-top: 10px;
+      gap: 20px;
+      flex-wrap: wrap;
     }
+
     .legend-item {
       display: flex;
       align-items: center;
       gap: 6px;
     }
+
     .color-box {
       width: 14px;
       height: 14px;
@@ -74,17 +76,32 @@
       border-radius: 3px;
     }
 
-    @media (max-width: 480px) {
+    /* 响应式适配 */
+    @media (max-width: 600px) {
+      body {
+        padding: 20px;
+      }
+
+      .container {
+        padding: 20px;
+      }
+
       .code-group {
-        font-size: 1.2em;
-        letter-spacing: 3px;
+        font-size: 18px;
+        letter-spacing: 2px;
       }
-      .qr-area img {
-        width: 160px;
-        height: 160px;
+
+      .top-image {
+        max-height: 80px;
       }
-      .qr-legend {
-        font-size: 13px;
+
+      #qrImage {
+        width: 150px !important;
+        height: 150px !important;
+      }
+
+      .legend-box {
+        gap: 10px;
       }
     }
   </style>
@@ -93,7 +110,9 @@
   <div class="container">
     <!-- 顶部图片 Logo 或 Banner -->
     <img class="top-image" src="logo.jpg" alt="品牌Logo">
-    <p>尊敬的用户您好</p>
+
+    <h2>防伪码验证结果</h2>
+    <p>尊敬的用户您好，</p>
     <p>你所查询的16位防伪码为：</p>
 
     <div id="codeContainer">
@@ -106,16 +125,19 @@
     <p>原产地：美国</p>
     <p style="color: red;">请核对16位防伪码及二维码的颜色。</p>
 
-    <div class="qr-area">
-      <img id="qrImage" src="qrcode-placeholder.png" alt="二维码" width="200" height="200">
+    <!-- 扫描的二维码图片 -->
+    <div style="text-align: center; margin: 20px 0;">
+      <img id="qrImage" src="qrcode-placeholder.png" alt="二维码" style="width: 200px; height: 200px;">
       <div class="qr-note">请确保二维码与防伪码颜色一致</div>
-      <div class="qr-legend">
-        <div class="legend-box">
-          <div class="legend-item"><span class="color-box" style="background:#008000;"></span> 左上：绿色</div>
-          <div class="legend-item"><span class="color-box" style="background:#b4005a;"></span> 右上：红紫</div>
-          <div class="legend-item"><span class="color-box" style="background:#000000;"></span> 左下：黑色</div>
-          <div class="legend-item"><span class="color-box" style="background:#0096ff;"></span> 右下：蓝色</div>
-        </div>
+    </div>
+
+    <!-- 四象限颜色图例 -->
+    <div class="qr-legend">
+      <div class="legend-box">
+        <div class="legend-item"><span class="color-box" style="background:#008000;"></span> 左上：绿色</div>
+        <div class="legend-item"><span class="color-box" style="background:#b4005a;"></span> 右上：红紫</div>
+        <div class="legend-item"><span class="color-box" style="background:#000000;"></span> 左下：黑色</div>
+        <div class="legend-item"><span class="color-box" style="background:#0096ff;"></span> 右下：蓝色</div>
       </div>
     </div>
   </div>
@@ -173,6 +195,7 @@
       return `${yyyy}-${mm}-${dd} ${hh}:${mi}`;
     }
 
+    // 渲染内容
     renderCode(code);
     document.getElementById("timestamp").textContent = getCurrentTime();
   </script>
